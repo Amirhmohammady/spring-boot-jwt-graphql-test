@@ -18,7 +18,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -76,7 +78,13 @@ class JwtAuthenticationControllerTest {
     //in junit4 Before is equal to BeforeEach
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+//        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                //so important: remove AuthenticationCredentialsNotFoundException
+                .apply(SecurityMockMvcConfigurers.springSecurity())
+                .alwaysDo(result -> SecurityContextHolder.setContext(TestSecurityContextHolder.getContext()))
+                .build();
         /*Authentication authentication = new UsernamePasswordAuthenticationToken(
                 "username", "password", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(authentication);*/
@@ -106,11 +114,11 @@ class JwtAuthenticationControllerTest {
     //@WithMockUser(username="admin",roles={"USER2","ADMIN2"})
     public void testUnauthorized() throws Exception {
         System.out.println("==================TEST Unauthorized==================");
+        SecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
         mockMvc.perform(MockMvcRequestBuilders.get("/hello")
                         //.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 )
                 .andDo(MockMvcResultHandlers.print())
-                //.andExpect(MockMvcResultMatchers.status().isUnauthorized())
-        ;
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 }
