@@ -95,7 +95,7 @@ class JwtAuthenticationControllerTest {
         // Code to run after each test
     }
 
-//    @Test
+    @Test
     //@WithMockUser("javainuse")
     public void testLogin() throws Exception {
         System.out.println("==================TEST LOGIN==================");
@@ -104,10 +104,18 @@ class JwtAuthenticationControllerTest {
         Assertions.assertNotNull(token);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/hello")
-                        //.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+
+        token = login("admin", "pass2");
+        mockMvc.perform(MockMvcRequestBuilders.get("/hello")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
+
     }
 
     @Test
