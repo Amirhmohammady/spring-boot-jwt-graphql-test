@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class MyExceptionResolver extends DataFetcherExceptionResolverAdapter {
     @Override
     protected GraphQLError resolveToSingleError(Throwable ex, DataFetchingEnvironment env) {
-        System.out.println("asdfew342345");
+        System.out.println("============MyExceptionResolver.resolveToSingleError=============");
         System.out.println(ex.getClass());
         if (ex instanceof AccessDeniedException) {
             System.out.println("awer11111111");

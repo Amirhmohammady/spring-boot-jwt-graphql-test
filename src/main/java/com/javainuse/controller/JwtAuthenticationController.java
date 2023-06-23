@@ -1,38 +1,49 @@
 package com.javainuse.controller;
 
-import java.util.Objects;
-
+import com.javainuse.config.JwtTokenUtil;
+import com.javainuse.model.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.*;
 
-import com.javainuse.config.JwtTokenUtil;
-import com.javainuse.model.JwtResponse;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
 public class JwtAuthenticationController {
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
-	@Autowired
-	private UserDetailsService jwtInMemoryUserDetailsService;
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtUserPass authenticationRequest)
+            throws Exception {
+		Objects.requireNonNull(authenticationRequest.getUsername());
+		Objects.requireNonNull(authenticationRequest.getPassword());
 
-	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+		try {
+			Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),authenticationRequest.getPassword()));
+			SecurityContextHolder.getContext().setAuthentication(authenticate);
+			User user = (User) authenticate.getPrincipal();
+			return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(user)));
+		} catch (DisabledException e) {
+			throw new Exception("USER_DISABLED", e);
+		} catch (BadCredentialsException e) {
+			throw new Exception("INVALID_CREDENTIALS", e);
+		}
+    }
+
+	/*@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtUserPass authenticationRequest)
 			throws Exception {
 
@@ -57,5 +68,5 @@ public class JwtAuthenticationController {
 		} catch (BadCredentialsException e) {
 			throw new Exception("INVALID_CREDENTIALS", e);
 		}
-	}
+	}*/
 }

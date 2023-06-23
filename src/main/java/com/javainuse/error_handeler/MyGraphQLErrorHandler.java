@@ -20,7 +20,7 @@ public class MyGraphQLErrorHandler implements GraphQLErrorHandler {
 
     @Override
     public List<GraphQLError> processErrors(List<GraphQLError> errors) {
-        System.out.println("sddsfsdfsdfdsfew");
+        System.out.println("================MyGraphQLErrorHandler.processErrors================");
         errors.forEach(System.out::println);
         List<GraphQLError> clientErrors = filterClientErrors(errors);
         List<GraphQLError> unAuthorized = filterUnAuthorizedErrors(errors);

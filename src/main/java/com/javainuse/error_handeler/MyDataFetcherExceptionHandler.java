@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public class MyDataFetcherExceptionHandler implements DataFetcherExceptionHandler {
     @Override
     public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters handlerParameters) {
-        System.out.println("32e23r45235");
+        System.out.println("================MyDataFetcherExceptionHandler.handleException==================");
         DataFetcherExceptionHandlerResult result = onException(handlerParameters);
         return CompletableFuture.completedFuture(result);
     }

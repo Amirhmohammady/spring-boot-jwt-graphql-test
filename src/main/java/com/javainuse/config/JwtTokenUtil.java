@@ -1,6 +1,7 @@
 package com.javainuse.config;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

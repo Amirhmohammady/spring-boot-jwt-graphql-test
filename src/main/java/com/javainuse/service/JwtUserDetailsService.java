@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-//@Profile("default")
+@Profile("default")
 public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
     PasswordEncoder passwordEncoder;
