@@ -103,7 +103,7 @@ class JwtAuthenticationControllerTest {
     }
 
     @Test
-    @WithMockUser(username="admin",roles={"USER2","ADMIN2"})
+    //@WithMockUser(username="admin",roles={"USER2","ADMIN2"})
     public void testUnauthorized() throws Exception {
         System.out.println("==================TEST Unauthorized==================");
         mockMvc.perform(MockMvcRequestBuilders.get("/hello")
